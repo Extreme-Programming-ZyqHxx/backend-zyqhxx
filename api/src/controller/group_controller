@@ -1,0 +1,40 @@
+from flask import Blueprint, request, jsonify
+from api.src.model.group import Group
+from api.src.utils.auth import login_required
+
+group_bp = Blueprint('group', __name__, url_prefix='/api/groups')
+
+
+@group_bp.route('', methods=['GET'])
+@login_required
+def get_all_groups(user_id: int):
+    groups = Group.get_all(user_id)
+    return jsonify({
+        'success': True,
+        'data': [dict(g) for g in groups]
+    })
+
+
+@group_bp.route('', methods=['POST'])
+@login_required
+def add_group(user_id: int):
+    data = request.get_json()
+    if not data or 'group_name' not in data:
+        return jsonify({
+            'success': False,
+            'message': '分组名称不能为空'
+        }), 400
+
+    group_name = data['group_name'].strip()
+    group_id = Group.add(group_name, user_id)
+    if group_id == -1:
+        return jsonify({
+            'success': False,
+            'message': '分组已存在'
+        }), 400
+
+    return jsonify({
+        'success': True,
+        'message': '添加成功',
+        'data': {'id': group_id}
+    }), 201
