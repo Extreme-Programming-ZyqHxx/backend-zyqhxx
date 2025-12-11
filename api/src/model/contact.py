@@ -284,7 +284,7 @@ class Contact:
                 name = str(row[0]).strip()
                 phone1 = str(row[1]).strip()
 
-                # ========== 强制处理数据验证（关键修复）==========
+                # ========== 强制处理数据验证==========
                 # 1. 处理空姓名：默认赋值为“未知姓名_行号”
                 if not name:
                     name = f'未知姓名_{row_num}'
