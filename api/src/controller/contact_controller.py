@@ -7,9 +7,9 @@ from io import BytesIO
 contact_bp = Blueprint('contact', __name__, url_prefix='/api/contacts')
 
 
-# 原有功能：获取所有联系人（保留登录验证，兼容前端user_id传递）
+# 获取所有联系人（登录验证，兼容前端user_id传递）
 @contact_bp.route('', methods=['GET'])
-# 临时注释登录验证，解决登录过期问题（后续可根据实际登录逻辑恢复）
+# 临时注释登录验证，解决登录过期问题
 # @login_required
 def get_all():
     """获取当前用户的所有联系人（支持搜索/分组筛选/收藏筛选）"""
@@ -48,7 +48,7 @@ def get_all():
     })
 
 
-# 原有功能：添加单个联系人（适配多字段+修复分组验证）
+# 添加单个联系人（适配多字段+修复分组验证）
 @contact_bp.route('', methods=['POST'])
 # @login_required
 def add():
@@ -66,7 +66,7 @@ def add():
             'message': '姓名和电话1不能为空'
         }), 400
 
-    # 修复：分组ID=0时跳过验证（未分组）
+    # 分组ID=0时跳过验证（未分组）
     group_id = data.get('group_id', 0)
     try:
         group_id = int(group_id)
@@ -96,7 +96,7 @@ def add():
     }), 201
 
 
-# 原有功能：修改联系人（适配多字段）
+# 修改联系人（适配多字段）
 @contact_bp.route('', methods=['PUT'])
 # @login_required
 def update():
@@ -154,7 +154,7 @@ def update():
     })
 
 
-# 原有功能：删除联系人
+# 删除联系人
 @contact_bp.route('', methods=['DELETE'])
 # @login_required
 def delete():
@@ -186,7 +186,7 @@ def delete():
     })
 
 
-# 原有功能：批量添加联系人（CSV导入）
+# 批量添加联系人（CSV导入）
 @contact_bp.route('/batch', methods=['POST'])
 # @login_required
 def batch_add():
@@ -213,7 +213,7 @@ def batch_add():
     })
 
 
-# 原有功能：导出CSV（修复中文乱码，添加UTF-8 BOM）
+# 导出CSV（修复中文乱码，添加UTF-8 BOM）
 @contact_bp.route('/export', methods=['GET'])
 # @login_required
 def export():
@@ -236,7 +236,7 @@ def export():
     )
 
 
-# 新增功能：切换收藏状态
+# 切换收藏状态
 @contact_bp.route('/favorite/<int:contact_id>', methods=['PUT'])
 # @login_required
 def toggle_favorite(contact_id: int):
@@ -259,7 +259,7 @@ def toggle_favorite(contact_id: int):
     })
 
 
-# 新增功能：导出Excel（修复下载配置）
+# 导出Excel（修复下载配置）
 @contact_bp.route('/export/excel', methods=['GET'])
 # @login_required
 def export_excel():
@@ -275,7 +275,7 @@ def export_excel():
         excel_data,
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8',
         download_name=f'通讯录_{user_id}.xlsx',
-        as_attachment=True  # 强制下载，避免浏览器直接打开
+        as_attachment=True  # 避免浏览器直接打开
     )
 
 
@@ -287,7 +287,7 @@ def import_excel():
     except ValueError:
         user_id = 1
 
-    # 强制打印所有请求信息（排查文件是否上传）
+    # 排查文件是否上传
     print("请求头：", request.headers)
     print("请求文件：", request.files)
 
@@ -299,7 +299,7 @@ def import_excel():
 
     try:
         file_data = BytesIO(file.read())
-        # 调用导入方法时，强制分组ID=0（跳过分组验证）
+        # 调用导入方法时，跳过分组验证
         success, fail = Contact.import_from_excel(file_data, user_id, force_group_id=0)
         # 优化返回提示，告知用户数据已被强制处理
         if success > 0:
