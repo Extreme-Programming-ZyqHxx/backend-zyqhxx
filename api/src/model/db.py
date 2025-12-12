@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Connection
 import os
 
-# 修复：简化DB_PATH路径，确保创建在项目根目录的data文件夹
+# 简化DB_PATH路径，确保创建在项目根目录的data文件夹
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(PROJECT_ROOT, 'data', 'contacts.db')
 
@@ -44,7 +44,7 @@ def init_db():
             )
         ''')
 
-        # 3. 联系人表（新增收藏+多字段）
+        # 3. 联系人表（支持收藏+多字段）
         conn.execute('''
             CREATE TABLE IF NOT EXISTS contacts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
