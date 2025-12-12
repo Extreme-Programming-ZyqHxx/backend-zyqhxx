@@ -1,6 +1,5 @@
 import os
 import sys
-# 解决包导入问题（确保能找到api目录）
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask
@@ -14,12 +13,11 @@ from api.src.model.db import init_db
 # 初始化Flask应用
 app = Flask(__name__)
 
-# 修复跨域：允许所有来源（开发环境）
 CORS(
     app,
     supports_credentials=True,
     resources=r"/api/*",
-    origins="*",  # 允许所有前端地址
+    origins="*",  
     allow_headers=["Content-Type", "X-User-Id", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
